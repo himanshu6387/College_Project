@@ -22,7 +22,7 @@ const StudentRegister = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/student/register`, form);
+      const res = await axios.post(`https://college-backend-s592.onrender.com/api/student/register`, form);
       alert('Registered successfully! Please login.');
       navigate('/');
     } catch (err) {

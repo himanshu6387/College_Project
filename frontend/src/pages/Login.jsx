@@ -15,7 +15,7 @@ function Login() {
 
     if (role === 'admin') {
       try {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/login`, { email, password });
+        const res = await axios.post(`https://college-backend-s592.onrender.com/api/admin/login`, { email, password });
         localStorage.setItem('adminToken', res.data.token);
         navigate('/admin/dashboard');
       } catch (err) {
@@ -23,7 +23,7 @@ function Login() {
       }
     } else if (role === 'student') {
       try {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/student/login`, { email, password });
+        const res = await axios.post(`https://college-backend-s592.onrender.com/api/student/login`, { email, password });
         localStorage.setItem('studentToken', res.data.token);
         // Must provide slug to redirect to correct form
         if (!slug) return alert('Please enter your college slug!');

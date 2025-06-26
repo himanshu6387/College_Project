@@ -20,7 +20,7 @@ const AdminDashboard = () => {
 
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}//api/admin/create-college`,
+        `https://college-backend-s592.onrender.com/api/admin/create-college`,
         { name: collegeName },
         {
           headers: {
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   const fetchStudentData = async () => {
     if (!token) return;
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/data`, {
+      const res = await axios.get(`https://college-backend-s592.onrender.com/api/admin/data`, {
         headers: {
           Authorization: token,
         },

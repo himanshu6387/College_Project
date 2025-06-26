@@ -44,7 +44,7 @@ const StudentRegsiterForm=()=> {
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/student/signup/${slug}`,
+        `https://college-backend-s592.onrender.com/api/student/signup/${slug}`,
         formData
       );
       alert('Registration successful!');
