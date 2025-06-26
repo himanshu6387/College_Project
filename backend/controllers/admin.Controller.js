@@ -27,7 +27,7 @@
       const college = await College.create({ name, slug });
       res.json({ 
   message: 'College Created', 
-  link: `http://localhost:5173/student/register/${slug}`, // FULL LINK WITH CORRECT PORT
+  link: `https://college-project-theta-weld.vercel.app/student/register/${slug}`, // FULL LINK WITH CORRECT PORT
   slug 
 });
 
