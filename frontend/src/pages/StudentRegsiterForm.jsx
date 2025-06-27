@@ -70,21 +70,11 @@ const StudentRegsiterForm=()=> {
           </div>
           <div className="col-md-6 mb-3">
             <label>Class:</label>
-            <select name="class" className="form-control" onChange={handleChange} required>
-              <option value="">Select Class</option>
-              {[...Array(12)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>{i + 1}</option>
-              ))}
-            </select>
+            <input type="text" name="class" onChange={handleChange}  />
           </div>
           <div className="col-md-6 mb-3">
             <label>Section:</label>
-            <select name="section" className="form-control" onChange={handleChange} required>
-              <option value="">Select Section</option>
-              {['A', 'B', 'C', 'D'].map(section => (
-                <option key={section} value={section}>{section}</option>
-              ))}
-            </select>
+            <input type="text" name="section" onChange={handleChange}  className=' form-control' />
           </div>
           <div className="col-md-6 mb-3">
             <label>Phone:</label>
@@ -133,8 +123,8 @@ const StudentRegsiterForm=()=> {
             )}
           </div>
           <div className="col-md-6 mb-3">
-            <label>Password:</label>
-            <input type="password" name="password" className="form-control" onChange={handleChange} required />
+            <label>Roll No</label>
+            <input type="text" name="password" className="form-control" onChange={handleChange} required />
           </div>
         </div>
 
