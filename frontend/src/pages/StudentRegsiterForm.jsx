@@ -70,7 +70,7 @@ const StudentRegsiterForm=()=> {
           </div>
           <div className="col-md-6 mb-3">
             <label>Class:</label>
-            <input type="text" name="class" onChange={handleChange}  />
+            <input type="text" name="class" onChange={handleChange} className=' form-control'  />
           </div>
           <div className="col-md-6 mb-3">
             <label>Section:</label>
