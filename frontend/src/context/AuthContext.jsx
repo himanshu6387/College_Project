@@ -11,7 +11,7 @@ export const AuthProvider=({children})=>{
       if(retriveToken){
         setToken(retriveToken)
       }
-    },[token])
+    },[])
 
     const logout=()=>{
         localStorage.removeItem('adminToken')
