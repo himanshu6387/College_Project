@@ -57,7 +57,7 @@ const StudentRegsiterForm=()=> {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-3">
       <h3>Student Registration - {slug.replace(/-/g, ' ')}</h3>
       {success && (
   <div className="text-center my-4">
