@@ -24,7 +24,6 @@ const StudentRegsiterForm=()=> {
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -159,8 +158,8 @@ const StudentRegsiterForm=()=> {
           </div>
         </div>
 
-        <button className="btn btn-success" disabled={loading}>
-          {loading ? 'Submitting...' : 'Submit'}
+        <button className="btn btn-success">
+          Submit
         </button>
       </form>
     </div>
