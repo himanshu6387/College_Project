@@ -189,7 +189,7 @@ const AdminDashboard = () => {
                       {stu.profileImage && (
                         <button
                           className="btn btn-sm btn-outline-primary"
-                          onClick={() => handleImageDownload(stu.profileImage, `student_${i + 1}.jpg`)}
+                          onClick={() => handleImageDownload(stu.profileImage, `${i + 1}.jpg`)}
                         >
                           ⬇️
                         </button>
