@@ -135,11 +135,6 @@ const StudentRegsiterForm=()=> {
             <label>Address:</label>
             <textarea name="address" className="form-control" onChange={handleChange} required />
           </div>
-
-           <button className="btn btn-success">
-          Submit
-        </button>
-
           <div className="col-md-6 mb-3">
             <label>Image:</label>
             <input
@@ -163,7 +158,9 @@ const StudentRegsiterForm=()=> {
           </div>
         </div>
 
-       
+        <button className="btn btn-success mb-5" disabled={loading}>
+          {loading ? 'Submitting...' : 'Submit'}
+        </button>
       </form>
     </div>
   );
