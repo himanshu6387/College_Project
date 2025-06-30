@@ -93,35 +93,35 @@ const StudentRegsiterForm=()=> {
         <div className="row">
           <div className="col-md-6 mb-3">
             <label>Name:</label>
-            <input type="text" name="name" className="form-control" onChange={handleChange} required />
+            <input type="text" name="name" className="form-control" onChange={handleChange} required placeholder='Enter the Name' />
           </div>
           <div className="col-md-6 mb-3">
             <label>Email:</label>
-            <input type="email" name="email" className="form-control" onChange={handleChange} />
+            <input type="email" name="email" className="form-control" onChange={handleChange} placeholder='Enter the Email' />
           </div>
           <div className="col-md-6 mb-3">
             <label>Class:</label>
-            <input type="text" name="class" onChange={handleChange} className=' form-control'  />
+            <input type="text" name="class" onChange={handleChange} className=' form-control' placeholder='Enter the Class'  />
           </div>
           <div className="col-md-6 mb-3">
             <label>Section:</label>
-            <input type="text" name="section" onChange={handleChange}  className=' form-control' />
+            <input type="text" name="section" onChange={handleChange}  className=' form-control' placeholder='Enter the Section' />
           </div>
           <div className="col-md-6 mb-3">
             <label>Phone:</label>
-            <input type="text" name="phone" className="form-control" onChange={handleChange} required />
+            <input type="text" name="phone" className="form-control" onChange={handleChange} required placeholder='Enter the Phone' />
           </div>
           <div className="col-md-6 mb-3">
             <label>Aadhaar Number:</label>
-            <input type="text" name="aadhaar" className="form-control" onChange={handleChange}/>
+            <input type="text" name="aadhaar" className="form-control" onChange={handleChange} placeholder='Enter the Aadhar Number'/>
           </div>
           <div className="col-md-6 mb-3">
             <label>Father's Name:</label>
-            <input type="text" name="fatherName" className="form-control" onChange={handleChange} required />
+            <input type="text" name="fatherName" className="form-control" onChange={handleChange} required  placeholder='Enter the Fathers Name'/>
           </div>
           <div className="col-md-6 mb-3">
             <label>Mother's Name:</label>
-            <input type="text" name="motherName" className="form-control" onChange={handleChange} />
+            <input type="text" name="motherName" className="form-control" onChange={handleChange}  placeholder='Enter the Mothers Name'/>
           </div>
           <div className="col-md-6 mb-3">
             <label>Date of Birth:</label>
@@ -129,11 +129,11 @@ const StudentRegsiterForm=()=> {
           </div>
           <div className="col-md-6 mb-3">
             <label>Admission No:</label>
-            <input type="text" name="admissionNo" className="form-control" onChange={handleChange} required />
+            <input type="text" name="admissionNo" className="form-control" onChange={handleChange} required placeholder='Enter the Admission Number' />
           </div>
           <div className="col-md-12 mb-3">
             <label>Address:</label>
-            <textarea name="address" className="form-control" onChange={handleChange} required />
+            <textarea name="address" className="form-control" onChange={handleChange} required  placeholder='Enter the Address'/>
           </div>
           <div className="col-md-6 mb-3">
             <label>Image:</label>
@@ -154,7 +154,7 @@ const StudentRegsiterForm=()=> {
           </div>
           <div className="col-md-6 mb-3">
             <label>Roll No</label>
-            <input type="text" name="password" className="form-control" onChange={handleChange} />
+            <input type="text" name="password" className="form-control" onChange={handleChange} placeholder='Enter the RollNo'/>
           </div>
         </div>
 
