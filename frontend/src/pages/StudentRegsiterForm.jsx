@@ -158,7 +158,7 @@ const StudentRegsiterForm=()=> {
           </div>
         </div>
 
-        <button className="btn btn-success mb-5" disabled={loading}>
+        <button className="btn btn-success" disabled={loading}>
           {loading ? 'Submitting...' : 'Submit'}
         </button>
       </form>
