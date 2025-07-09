@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const AdminDashboard = () => {
   const [collegeName, setCollegeName] = useState('');
@@ -12,23 +14,18 @@ const AdminDashboard = () => {
 
   const handleCreateLink = async (e) => {
     e.preventDefault();
-
     if (!token) {
       alert("Admin token not found. Please log in again.");
       return;
     }
-
     try {
       const res = await axios.post(
         `https://college-backend-s592.onrender.com/api/admin/create-college`,
         { name: collegeName },
         {
-          headers: {
-            Authorization: token,
-          },
+          headers: { Authorization: token },
         }
       );
-
       const generated = res.data.link;
       alert(res.data.message);
       setNewLink(generated);
@@ -45,9 +42,7 @@ const AdminDashboard = () => {
     if (!token) return;
     try {
       const res = await axios.get(`https://college-backend-s592.onrender.com/api/admin/data`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: token },
       });
       setData(res.data);
     } catch (err) {
@@ -93,6 +88,26 @@ const AdminDashboard = () => {
       alert("Failed to download image.");
       console.error(err);
     }
+  };
+
+  const handleDownloadAllImages = async (students) => {
+    const zip = new JSZip();
+    for (let i = 0; i < students.length; i++) {
+      const stu = students[i];
+      if (stu.profileImage) {
+        try {
+          const response = await fetch(stu.profileImage);
+          const blob = await response.blob();
+          zip.file(`${i + 1}.jpg`, blob);
+        } catch (err) {
+          console.error(`Failed to fetch image ${i + 1}`, err);
+        }
+      }
+    }
+
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, 'student_photos.zip');
+    });
   };
 
   return (
@@ -202,6 +217,12 @@ const AdminDashboard = () => {
           </div>
 
           <div className="text-end mt-3">
+            <button
+              className="btn btn-primary me-2"
+              onClick={() => handleDownloadAllImages(selectedCollege.students)}
+            >
+              ⬇️ Download All Photos (ZIP)
+            </button>
             <button
               className="btn btn-success"
               onClick={() => handleDownloadExcel(selectedCollege.name, selectedCollege.students)}

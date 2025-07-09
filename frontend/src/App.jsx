@@ -6,7 +6,7 @@
     import StudentRegister from './pages/StudentRegister'
     import StudentRegisterForm from './pages/StudentRegsiterForm'
     import {Toaster} from 'react-hot-toast'
-// import Footer from './components/Footer'
+import Footer from './components/Footer'
 
     const App = () => {
         return (
@@ -19,7 +19,7 @@
                         <Route path="/student/register/:slug" element={<StudentRegisterForm />} />
                         <Route path="/register" element={<StudentRegister />} />
                     </Routes>
-                    {/* <Footer/> */}
+                    <Footer/>
                     <Toaster/>
                 </Router>
             </div>
