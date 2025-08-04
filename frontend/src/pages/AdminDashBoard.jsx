@@ -63,6 +63,7 @@ const AdminDashboard = () => {
       Class: stu.class,
       Section: stu.section,
       Phone: stu.phone,
+      Address:stu.address,
       Aadhaar: stu.aadhaar,
       'Admission No': stu.admissionNo,
       'Profile Image URL': stu.profileImage || 'N/A',
@@ -172,6 +173,7 @@ const AdminDashboard = () => {
                   <th>Class</th>
                   <th>Section</th>
                   <th>Phone</th>
+                  <th>Address</th>
                   <th>Aadhaar</th>
                   <th>Admission No</th>
                   <th>Download</th>
@@ -198,6 +200,7 @@ const AdminDashboard = () => {
                     <td>{stu.class}</td>
                     <td>{stu.section}</td>
                     <td>{stu.phone}</td>
+                    <td>{stu.address}</td>
                     <td>{stu.aadhaar}</td>
                     <td>{stu.admissionNo}</td>
                     <td>
