@@ -65,6 +65,8 @@ const AdminDashboard = () => {
       Phone: stu.phone,
       Address:stu.address,
       Aadhaar: stu.aadhaar,
+      MotherName:stu.motherName,
+      FatherName:stu.fatherName,
       'Admission No': stu.admissionNo,
       'Profile Image URL': stu.profileImage || 'N/A',
     }));
