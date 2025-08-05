@@ -170,6 +170,8 @@ const AdminDashboard = () => {
                   <th>Image</th>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Father's Name</th>
+                  <th>Mother's Name</th>
                   <th>Class</th>
                   <th>Section</th>
                   <th>Phone</th>
@@ -197,6 +199,8 @@ const AdminDashboard = () => {
                     </td>
                     <td>{stu.name}</td>
                     <td>{stu.email}</td>
+                    <td>{stu.fatherName}</td>
+                    <td>{stu.motherName}</td>
                     <td>{stu.class}</td>
                     <td>{stu.section}</td>
                     <td>{stu.phone}</td>
