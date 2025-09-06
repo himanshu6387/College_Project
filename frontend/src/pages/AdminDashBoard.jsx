@@ -116,70 +116,119 @@ const AdminDashboard = () => {
 
     // 🔥 Generate Proper College ID Card PDFs and zip them
   const handleDownloadIDCards = async (students, collegeName) => {
-    const zip = new JSZip();
+  const zip = new JSZip();
 
-    for (let i = 0; i < students.length; i++) {
-      const stu = students[i];
-      const doc = new jsPDF("p", "mm", [85, 55]); // ID Card size (85mm x 55mm)
+  for (let i = 0; i < students.length; i++) {
+    const stu = students[i];
+    const doc = new jsPDF("p", "mm", [85, 130]); // ID card size
 
-      // Outer Border
-      doc.setLineWidth(1);
-      doc.setDrawColor(0, 102, 204);
-      doc.rect(2, 2, 81, 51); 
+    // ===== FRONT SIDE =====
+    // Green curved header
+    doc.setFillColor(0, 153, 76);
+    doc.rect(0, 0, 85, 25, "F");
 
-      // Header band
-      doc.setFillColor(0, 102, 204); // Blue band
-      doc.rect(2, 2, 81, 12, "F");
+    // College Name
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
+    doc.text(collegeName || "ABC SCHOOL NAME", 42.5, 10, { align: "center" });
 
-      // College Name
-      doc.setFontSize(10);
-      doc.setTextColor(255, 255, 255);
-      doc.text(collegeName || "ABC COLLEGE", 42, 10, { align: "center" });
+    // Slogan
+    doc.setFontSize(8);
+    doc.text("SLOGAN HERE", 42.5, 18, { align: "center" });
 
-      // Profile Image (circle style)
-      if (stu.profileImage) {
-        try {
-          const imgResponse = await fetch(stu.profileImage);
-          const imgBlob = await imgResponse.blob();
-          const reader = new FileReader();
+    // Profile Image
+    if (stu.profileImage) {
+      try {
+        const imgResponse = await fetch(stu.profileImage);
+        const imgBlob = await imgResponse.blob();
+        const reader = new FileReader();
 
-          const base64Img = await new Promise((resolve) => {
-            reader.onloadend = () => resolve(reader.result);
-            reader.readAsDataURL(imgBlob);
-          });
+        const base64Img = await new Promise((resolve) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(imgBlob);
+        });
 
-          doc.addImage(base64Img, "JPEG", 30, 15, 25, 25); 
-          doc.circle(42, 27, 13); // circle outline
-        } catch (err) {
-          console.error("Image load failed", err);
-        }
+        // Circle photo
+        doc.addImage(base64Img, "JPEG", 27, 28, 30, 30, undefined, "FAST");
+      } catch (err) {
+        console.error("Image load failed", err);
       }
-
-      // Student Info
-      doc.setFontSize(8);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Name: ${stu.name || ""}`, 5, 45);
-      doc.text(`Class: ${stu.class || ""} - ${stu.section || ""}`, 5, 50);
-      doc.text(`Adm No: ${stu.admissionNo || ""}`, 45, 45);
-      doc.text(`Phone: ${stu.phone || ""}`, 45, 50);
-
-      // Footer band
-      doc.setFillColor(220, 220, 220);
-      doc.rect(2, 53, 81, 5, "F");
-      doc.setFontSize(6);
-      doc.setTextColor(50, 50, 50);
-      doc.text("Powered by College Portal", 42, 57, { align: "center" });
-
-      // Save PDF to zip
-      const pdfBlob = doc.output("blob");
-      zip.file(`${stu.name || "student"}_idcard.pdf`, pdfBlob);
     }
 
-    // Generate ZIP
-    zip.generateAsync({ type: "blob" }).then((content) => {
-      saveAs(content, `${collegeName || "students"}_idcards.zip`);
+    // Student details
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+
+    let y = 65;
+    const lineHeight = 7;
+
+    const details = [
+      ["Reg No", stu.admissionNo || ""],
+      ["Student ID", stu.aadhaar || ""],
+      ["Student Name", stu.name || ""],
+      ["Father/Guardian", stu.fatherName || ""],
+      ["Class", `${stu.class || ""} - ${stu.section || ""}`],
+      ["Emergency Call", stu.phone || ""],
+    ];
+
+    details.forEach(([label, value]) => {
+      doc.text(`${label} :`, 10, y);
+      doc.text(value, 40, y);
+      y += lineHeight;
     });
-  };
+
+    // ===== BACK SIDE =====
+    doc.addPage([85, 130]); // new page for back
+
+    // Header strip
+    doc.setFillColor(0, 153, 76);
+    doc.rect(0, 0, 85, 15, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text("STUDENT ID CARD", 42.5, 10, { align: "center" });
+
+    // College Address & Contact
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(8);
+    doc.text("Address: 123, College Road,", 10, 30);
+    doc.text("City, State - 000000", 10, 38);
+    doc.text("Email: college@email.com", 10, 46);
+    doc.text("Phone: +91-9876543210", 10, 54);
+
+    // QR Code
+    try {
+      const qrData = `ID: ${stu.admissionNo || ""} | Name: ${stu.name || ""}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(qrData)}`;
+
+      const qrResponse = await fetch(qrUrl);
+      const qrBlob = await qrResponse.blob();
+      const qrReader = new FileReader();
+
+      const base64QR = await new Promise((resolve) => {
+        qrReader.onloadend = () => resolve(qrReader.result);
+        qrReader.readAsDataURL(qrBlob);
+      });
+
+      doc.addImage(base64QR, "PNG", 25, 65, 35, 35);
+    } catch (err) {
+      console.error("QR code failed", err);
+    }
+
+    // Footer
+    doc.setFontSize(8);
+    doc.text("Authorized by College Administration", 42.5, 120, { align: "center" });
+
+    // Save to ZIP
+    const pdfBlob = doc.output("blob");
+    zip.file(`${stu.name || "student"}_idcard.pdf`, pdfBlob);
+  }
+
+  // Generate ZIP
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    saveAs(content, `${collegeName || "students"}_idcards.zip`);
+  });
+};
+
 
 
   return (
