@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
 
 const AdminDashboard = () => {
   const [collegeName, setCollegeName] = useState('');
@@ -63,10 +64,10 @@ const AdminDashboard = () => {
       Class: stu.class,
       Section: stu.section,
       Phone: stu.phone,
-      Address:stu.address,
+      Address: stu.address,
       Aadhaar: stu.aadhaar,
-      MotherName:stu.motherName,
-      FatherName:stu.fatherName,
+      MotherName: stu.motherName,
+      FatherName: stu.fatherName,
       'Admission No': stu.admissionNo,
       'Profile Image URL': stu.profileImage || 'N/A',
     }));
@@ -110,6 +111,63 @@ const AdminDashboard = () => {
 
     zip.generateAsync({ type: 'blob' }).then((content) => {
       saveAs(content, 'student_photos.zip');
+    });
+  };
+
+  // 🔥 NEW: Generate ID Card PDFs and zip them
+  const handleDownloadIDCards = async (students, collegeName) => {
+    const zip = new JSZip();
+
+    for (let i = 0; i < students.length; i++) {
+      const stu = students[i];
+      const doc = new jsPDF("p", "mm", "a4");
+
+      // Green header band
+      doc.setFillColor(0, 153, 76);
+      doc.rect(0, 0, 210, 40, "F");
+
+      // College Name
+      doc.setFontSize(18);
+      doc.setTextColor(255, 255, 255);
+      doc.text(collegeName || "ABC SCHOOL NAME", 105, 20, { align: "center" });
+
+      // Profile Image
+      if (stu.profileImage) {
+        try {
+          const imgResponse = await fetch(stu.profileImage);
+          const imgBlob = await imgResponse.blob();
+          const reader = new FileReader();
+
+          const base64Img = await new Promise((resolve) => {
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(imgBlob);
+          });
+
+          doc.addImage(base64Img, "JPEG", 80, 50, 50, 50);
+        } catch (err) {
+          console.error("Image load failed", err);
+        }
+      }
+
+      // Student details
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Name: ${stu.name || ""}`, 20, 120);
+      doc.text(`Father: ${stu.fatherName || ""}`, 20, 130);
+      doc.text(`Mother: ${stu.motherName || ""}`, 20, 140);
+      doc.text(`Class: ${stu.class || ""}`, 20, 150);
+      doc.text(`Section: ${stu.section || ""}`, 20, 160);
+      doc.text(`Phone: ${stu.phone || ""}`, 20, 170);
+      doc.text(`Admission No: ${stu.admissionNo || ""}`, 20, 180);
+
+      // Save PDF to zip
+      const pdfBlob = doc.output("blob");
+      zip.file(`${stu.name || "student"}_idcard.pdf`, pdfBlob);
+    }
+
+    // Generate ZIP
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, `${collegeName || "students"}_idcards.zip`);
     });
   };
 
@@ -233,10 +291,16 @@ const AdminDashboard = () => {
               ⬇️ Download All Photos (ZIP)
             </button>
             <button
-              className="btn btn-success"
+              className="btn btn-success me-2"
               onClick={() => handleDownloadExcel(selectedCollege.name, selectedCollege.students)}
             >
               ⬇️ Download Excel
+            </button>
+            <button
+              className="btn btn-warning"
+              onClick={() => handleDownloadIDCards(selectedCollege.students, selectedCollege.name)}
+            >
+              ⬇️ Download ID Cards (ZIP)
             </button>
           </div>
         </div>
