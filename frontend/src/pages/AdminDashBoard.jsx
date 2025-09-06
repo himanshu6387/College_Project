@@ -10,9 +10,23 @@ const AdminDashboard = () => {
   const [data, setData] = useState({});
   const [newLink, setNewLink] = useState(localStorage.getItem('generatedLink') || '');
   const [selectedCollege, setSelectedCollege] = useState(null);
+  const [templateImg, setTemplateImg] = useState(null); // 🔥 uploaded template
 
   const token = localStorage.getItem('adminToken');
 
+  // Upload template
+  const handleTemplateUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTemplateImg(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Create college
   const handleCreateLink = async (e) => {
     e.preventDefault();
     if (!token) {
@@ -39,6 +53,7 @@ const AdminDashboard = () => {
     }
   };
 
+  // Fetch student data
   const fetchStudentData = async () => {
     if (!token) return;
     try {
@@ -56,6 +71,7 @@ const AdminDashboard = () => {
     fetchStudentData();
   }, []);
 
+  // Excel download
   const handleDownloadExcel = (collegeName, students) => {
     const formattedData = students.map((stu, index) => ({
       'S.No': index + 1,
@@ -80,6 +96,7 @@ const AdminDashboard = () => {
     XLSX.writeFile(workbook, fileName);
   };
 
+  // Single image download
   const handleImageDownload = async (url, filename) => {
     try {
       const response = await fetch(url);
@@ -94,6 +111,7 @@ const AdminDashboard = () => {
     }
   };
 
+  // All images ZIP
   const handleDownloadAllImages = async (students) => {
     const zip = new JSZip();
     for (let i = 0; i < students.length; i++) {
@@ -114,122 +132,69 @@ const AdminDashboard = () => {
     });
   };
 
-    // 🔥 Generate Proper College ID Card PDFs and zip them
+  // ID Cards ZIP
   const handleDownloadIDCards = async (students, collegeName) => {
-  const zip = new JSZip();
-
-  for (let i = 0; i < students.length; i++) {
-    const stu = students[i];
-    const doc = new jsPDF("p", "mm", [85, 130]); // ID card size
-
-    // ===== FRONT SIDE =====
-    // Green curved header
-    doc.setFillColor(0, 153, 76);
-    doc.rect(0, 0, 85, 25, "F");
-
-    // College Name
-    doc.setFontSize(12);
-    doc.setTextColor(255, 255, 255);
-    doc.text(collegeName || "ABC SCHOOL NAME", 42.5, 10, { align: "center" });
-
-    // Slogan
-    doc.setFontSize(8);
-    doc.text("SLOGAN HERE", 42.5, 18, { align: "center" });
-
-    // Profile Image
-    if (stu.profileImage) {
-      try {
-        const imgResponse = await fetch(stu.profileImage);
-        const imgBlob = await imgResponse.blob();
-        const reader = new FileReader();
-
-        const base64Img = await new Promise((resolve) => {
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(imgBlob);
-        });
-
-        // Circle photo
-        doc.addImage(base64Img, "JPEG", 27, 28, 30, 30, undefined, "FAST");
-      } catch (err) {
-        console.error("Image load failed", err);
-      }
+    if (!templateImg) {
+      alert("Please upload an ID card template first!");
+      return;
     }
 
-    // Student details
-    doc.setFontSize(8);
-    doc.setTextColor(0, 0, 0);
+    const zip = new JSZip();
 
-    let y = 65;
-    const lineHeight = 7;
+    for (let i = 0; i < students.length; i++) {
+      const stu = students[i];
+      const doc = new jsPDF("p", "mm", [85, 130]); // ID card size
 
-    const details = [
-      ["Reg No", stu.admissionNo || ""],
-      ["Student ID", stu.aadhaar || ""],
-      ["Student Name", stu.name || ""],
-      ["Father/Guardian", stu.fatherName || ""],
-      ["Class", `${stu.class || ""} - ${stu.section || ""}`],
-      ["Emergency Call", stu.phone || ""],
-    ];
+      // Template as background
+      doc.addImage(templateImg, "PNG", 0, 0, 85, 130);
 
-    details.forEach(([label, value]) => {
-      doc.text(`${label} :`, 10, y);
-      doc.text(value, 40, y);
-      y += lineHeight;
-    });
+      // Profile photo
+      if (stu.profileImage) {
+        try {
+          const imgResponse = await fetch(stu.profileImage);
+          const imgBlob = await imgResponse.blob();
+          const reader = new FileReader();
 
-    // ===== BACK SIDE =====
-    doc.addPage([85, 130]); // new page for back
+          const base64Img = await new Promise((resolve) => {
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(imgBlob);
+          });
 
-    // Header strip
-    doc.setFillColor(0, 153, 76);
-    doc.rect(0, 0, 85, 15, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
-    doc.text("STUDENT ID CARD", 42.5, 10, { align: "center" });
+          doc.addImage(base64Img, "JPEG", 27, 28, 30, 30, undefined, "FAST");
+        } catch (err) {
+          console.error("Image load failed", err);
+        }
+      }
 
-    // College Address & Contact
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(8);
-    doc.text("Address: 123, College Road,", 10, 30);
-    doc.text("City, State - 000000", 10, 38);
-    doc.text("Email: college@email.com", 10, 46);
-    doc.text("Phone: +91-9876543210", 10, 54);
+      // Student details
+      doc.setFontSize(8);
+      doc.setTextColor(0, 0, 0);
 
-    // QR Code
-    try {
-      const qrData = `ID: ${stu.admissionNo || ""} | Name: ${stu.name || ""}`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(qrData)}`;
+      let y = 70;
+      const lineHeight = 7;
+      const details = [
+        ["Reg No", stu.admissionNo || ""],
+        ["Student ID", stu.aadhaar || ""],
+        ["Name", stu.name || ""],
+        ["Father/Guardian", stu.fatherName || ""],
+        ["Class", `${stu.class || ""} - ${stu.section || ""}`],
+        ["Phone", stu.phone || ""],
+      ];
 
-      const qrResponse = await fetch(qrUrl);
-      const qrBlob = await qrResponse.blob();
-      const qrReader = new FileReader();
-
-      const base64QR = await new Promise((resolve) => {
-        qrReader.onloadend = () => resolve(qrReader.result);
-        qrReader.readAsDataURL(qrBlob);
+      details.forEach(([label, value]) => {
+        doc.text(`${label}: ${value}`, 10, y);
+        y += lineHeight;
       });
 
-      doc.addImage(base64QR, "PNG", 25, 65, 35, 35);
-    } catch (err) {
-      console.error("QR code failed", err);
+      // Save each PDF into ZIP
+      const pdfBlob = doc.output("blob");
+      zip.file(`${stu.name || "student"}_idcard.pdf`, pdfBlob);
     }
 
-    // Footer
-    doc.setFontSize(8);
-    doc.text("Authorized by College Administration", 42.5, 120, { align: "center" });
-
-    // Save to ZIP
-    const pdfBlob = doc.output("blob");
-    zip.file(`${stu.name || "student"}_idcard.pdf`, pdfBlob);
-  }
-
-  // Generate ZIP
-  zip.generateAsync({ type: "blob" }).then((content) => {
-    saveAs(content, `${collegeName || "students"}_idcards.zip`);
-  });
-};
-
-
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, `${collegeName || "students"}_idcards.zip`);
+    });
+  };
 
   return (
     <div className="container py-4">
@@ -268,6 +233,13 @@ const AdminDashboard = () => {
       </div>
 
       <hr className="my-4" />
+
+      {/* 🔥 Upload ID card template */}
+      <div className="mb-4">
+        <label className="form-label fw-semibold">Upload ID Card Template (PNG/JPG)</label>
+        <input type="file" accept="image/*" className="form-control" onChange={handleTemplateUpload} />
+        {templateImg && <p className="mt-2 text-success">✅ Template uploaded</p>}
+      </div>
 
       <h4 className="mb-3">📚 Student Data</h4>
 
