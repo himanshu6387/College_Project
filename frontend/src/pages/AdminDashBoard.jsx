@@ -114,24 +114,29 @@ const AdminDashboard = () => {
     });
   };
 
-  // 🔥 NEW: Generate ID Card PDFs and zip them
+    // 🔥 Generate Proper College ID Card PDFs and zip them
   const handleDownloadIDCards = async (students, collegeName) => {
     const zip = new JSZip();
 
     for (let i = 0; i < students.length; i++) {
       const stu = students[i];
-      const doc = new jsPDF("p", "mm", "a4");
+      const doc = new jsPDF("p", "mm", [85, 55]); // ID Card size (85mm x 55mm)
 
-      // Green header band
-      doc.setFillColor(0, 153, 76);
-      doc.rect(0, 0, 210, 40, "F");
+      // Outer Border
+      doc.setLineWidth(1);
+      doc.setDrawColor(0, 102, 204);
+      doc.rect(2, 2, 81, 51); 
+
+      // Header band
+      doc.setFillColor(0, 102, 204); // Blue band
+      doc.rect(2, 2, 81, 12, "F");
 
       // College Name
-      doc.setFontSize(18);
+      doc.setFontSize(10);
       doc.setTextColor(255, 255, 255);
-      doc.text(collegeName || "ABC SCHOOL NAME", 105, 20, { align: "center" });
+      doc.text(collegeName || "ABC COLLEGE", 42, 10, { align: "center" });
 
-      // Profile Image
+      // Profile Image (circle style)
       if (stu.profileImage) {
         try {
           const imgResponse = await fetch(stu.profileImage);
@@ -143,22 +148,27 @@ const AdminDashboard = () => {
             reader.readAsDataURL(imgBlob);
           });
 
-          doc.addImage(base64Img, "JPEG", 80, 50, 50, 50);
+          doc.addImage(base64Img, "JPEG", 30, 15, 25, 25); 
+          doc.circle(42, 27, 13); // circle outline
         } catch (err) {
           console.error("Image load failed", err);
         }
       }
 
-      // Student details
-      doc.setFontSize(12);
+      // Student Info
+      doc.setFontSize(8);
       doc.setTextColor(0, 0, 0);
-      doc.text(`Name: ${stu.name || ""}`, 20, 120);
-      doc.text(`Father: ${stu.fatherName || ""}`, 20, 130);
-      doc.text(`Mother: ${stu.motherName || ""}`, 20, 140);
-      doc.text(`Class: ${stu.class || ""}`, 20, 150);
-      doc.text(`Section: ${stu.section || ""}`, 20, 160);
-      doc.text(`Phone: ${stu.phone || ""}`, 20, 170);
-      doc.text(`Admission No: ${stu.admissionNo || ""}`, 20, 180);
+      doc.text(`Name: ${stu.name || ""}`, 5, 45);
+      doc.text(`Class: ${stu.class || ""} - ${stu.section || ""}`, 5, 50);
+      doc.text(`Adm No: ${stu.admissionNo || ""}`, 45, 45);
+      doc.text(`Phone: ${stu.phone || ""}`, 45, 50);
+
+      // Footer band
+      doc.setFillColor(220, 220, 220);
+      doc.rect(2, 53, 81, 5, "F");
+      doc.setFontSize(6);
+      doc.setTextColor(50, 50, 50);
+      doc.text("Powered by College Portal", 42, 57, { align: "center" });
 
       // Save PDF to zip
       const pdfBlob = doc.output("blob");
@@ -170,6 +180,7 @@ const AdminDashboard = () => {
       saveAs(content, `${collegeName || "students"}_idcards.zip`);
     });
   };
+
 
   return (
     <div className="container py-4">
