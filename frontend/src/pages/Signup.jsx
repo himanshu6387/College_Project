@@ -7,6 +7,7 @@ function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate();
 
   const signupHandler = async (e) => {
@@ -17,6 +18,7 @@ function Signup() {
         `https://college-backend-s592.onrender.com/api/user/userRegister`,
         { name, email, password }
       );
+      setLoading(true)
 
       alert(res.data.message || 'User registered successfully!');
 
@@ -25,6 +27,9 @@ function Signup() {
     } catch (err) {
       alert(err.response?.data?.message || 'Signup failed');
     }
+    finally{
+      setLoading(false)
+    }
   };
 
   return (
@@ -32,6 +37,18 @@ function Signup() {
       className="container mt-5 p-4 rounded-5"
       style={{ maxWidth: '500px', boxShadow: '0 0 10px 5px gray' }}
     >
+
+    {loading && (
+        <div className="absolute inset-0 flex items-center justify-center flex-col bg-opacity-70 z-50">
+          <img
+            src="https://vmsmobile.azurewebsites.net/images/Spinner-3.gif"
+            alt="Loading..."
+            className="w-16 h-16"
+          />
+          <p className=' text-center text-green-500 mt-2 text-xl font-bold bg-white p-3 rounded-md text-shadow-amber-300'>Loading...</p>
+        </div>
+      )}
+
       <h3 className="text-center mb-4">Sign Up</h3>
 
       <form onSubmit={signupHandler}>

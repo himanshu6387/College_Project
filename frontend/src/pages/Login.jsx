@@ -6,6 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -18,6 +19,8 @@ function Login() {
         { email, password }
       );
 
+      setLoading(true)
+
       // Save token & user in context
       login(res.data.token, res.data.user);
 
@@ -26,6 +29,9 @@ function Login() {
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
     }
+    finally{
+      setLoading(false)
+    }
   };
 
   return (
@@ -33,6 +39,21 @@ function Login() {
       className="container mt-5 p-4 rounded-5"
       style={{ maxWidth: '500px', boxShadow: '0 0 10px 5px gray' }}
     >
+
+
+    {/* 🔹 Overlay Loader with GIF */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center flex-col bg-opacity-70 z-50">
+          <img
+            src="https://vmsmobile.azurewebsites.net/images/Spinner-3.gif"
+            alt="Loading..."
+            className="w-16 h-16"
+          />
+          <p className=' text-center text-green-500 mt-2 text-xl font-bold bg-white p-3 rounded-md text-shadow-amber-300'>Logging...</p>
+        </div>
+      )}
+
+
       <h3 className="text-center mb-4 text-decoration-underline">Login</h3>
 
       <form onSubmit={loginHandler}>
