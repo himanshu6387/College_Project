@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -12,17 +13,18 @@ function Login() {
 
   const loginHandler = async (e) => {
     e.preventDefault();
-
+     setLoading(true)
     try {
       const res = await axios.post(
         `https://college-backend-s592.onrender.com/api/user/userLogin`,
         { email, password }
       );
 
-      setLoading(true)
+     
 
       // Save token & user in context
       login(res.data.token, res.data.user);
+      toast.success('User LoggedIn Successfully...')
 
       // Redirect
       navigate('/admin/dashboard');

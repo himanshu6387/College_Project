@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function Signup() {
   const [name, setName] = useState('');
@@ -12,15 +13,16 @@ function Signup() {
 
   const signupHandler = async (e) => {
     e.preventDefault();
+     setLoading(true)
 
     try {
       const res = await axios.post(
         `https://college-backend-s592.onrender.com/api/user/userRegister`,
         { name, email, password }
       );
-      setLoading(true)
+     
 
-      alert(res.data.message || 'User registered successfully!');
+      toast.success(res.data.message || 'User registered successfully!');
 
       // Redirect to login after signup
       navigate('/');
