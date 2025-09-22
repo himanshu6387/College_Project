@@ -7,6 +7,7 @@
     import StudentRegisterForm from './pages/StudentRegsiterForm'
     import {Toaster} from 'react-hot-toast'
 import Footer from './components/Footer'
+import Signup from './pages/Signup'
 
     const App = () => {
         return (
@@ -15,6 +16,7 @@ import Footer from './components/Footer'
                     <Navbar />
                     <Routes>
                         <Route path="/" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
                         <Route path="/admin/dashboard" element={<AdminDashBoard />} />
                         <Route path="/student/register/:slug" element={<StudentRegisterForm />} />
                         <Route path="/register" element={<StudentRegister />} />
