@@ -7,20 +7,20 @@ import toast from 'react-hot-toast';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const loginHandler = async (e) => {
     e.preventDefault();
-     setLoading(true)
+    setLoading(true)
     try {
       const res = await axios.post(
         `https://college-backend-s592.onrender.com/api/user/userLogin`,
         { email, password }
       );
 
-     
+
 
       // Save token & user in context
       login(res.data.token, res.data.user);
@@ -31,7 +31,7 @@ function Login() {
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
     }
-    finally{
+    finally {
       setLoading(false)
     }
   };
@@ -43,17 +43,21 @@ function Login() {
     >
 
 
-    {/* 🔹 Overlay Loader with GIF */}
+      {/* 🔹 Overlay Loader with GIF */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center flex-col bg-opacity-70 z-50">
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-dark bg-opacity-50 z-3">
           <img
             src="https://vmsmobile.azurewebsites.net/images/Spinner-3.gif"
             alt="Loading..."
-            className="w-16 h-16"
+            className="mb-3"
+            style={{ width: "64px", height: "64px" }}
           />
-          <p className=' text-center text-green-500 mt-2 text-xl font-bold bg-white p-3 rounded-md text-shadow-amber-300'>Logging...</p>
+          <p className="text-center text-success mt-2 fs-4 fw-bold bg-white px-3 py-2 rounded shadow">
+            Logging...
+          </p>
         </div>
       )}
+
 
 
       <h3 className="text-center mb-4 text-decoration-underline">Login</h3>
